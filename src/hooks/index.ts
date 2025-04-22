@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 type QueryValue = string | number | boolean | undefined;
 
 export function useParamState<T extends QueryValue>(
   queryKey: string,
-  defaultValue: T
+  defaultValue?: T
 ): [T, (value: T) => void] {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const queryValue = searchParams.get(queryKey);
-  const initialState = queryValue !== null ? (queryValue as unknown as T) : defaultValue;
+  const initialState =
+    queryValue !== null ? (queryValue as unknown as T) : defaultValue;
 
-  const [state, setState] = useState<T>(initialState);
+  const [state, setState] = useState<T>(initialState as any);
 
   useEffect(() => {
     if (state !== initialState) {
@@ -27,7 +28,9 @@ export function useParamState<T extends QueryValue>(
       }
 
       const newQueryString = newSearchParams.toString();
-      const newUrl = `${window.location.pathname}${newQueryString ? `?${newQueryString}` : ''}`;
+      const newUrl = `${window.location.pathname}${
+        newQueryString ? `?${newQueryString}` : ""
+      }`;
 
       router.push(newUrl);
     }
@@ -35,3 +38,17 @@ export function useParamState<T extends QueryValue>(
 
   return [state, setState];
 }
+
+export const useDebounce = <T>(value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+};

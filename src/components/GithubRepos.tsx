@@ -1,10 +1,11 @@
 "use client";
-import { Column, GitHubRepo } from "@/types";
-import Table from "./Table";
-import Pagination from "./Pagination";
 import { getBestRepos } from "@/api/github.api";
-import { useState } from "react";
 import { useParamState } from "@/hooks";
+import { Column, GitHubRepo } from "@/types";
+import { useState } from "react";
+import Pagination from "./Pagination";
+import SearchInput from "./SearchInput";
+import Table from "./Table";
 
 const GithubRepos = ({
   repos,
@@ -14,15 +15,30 @@ const GithubRepos = ({
   totalCount: number;
 }) => {
   const [paginatedRepos, setPaginatedRepos] = useState(repos);
-  const [page, setPage] = useParamState<number>("query", 1);
+  const [searchQuery, setSearchQuery] = useParamState<string>("query", "");
+  const [page, setPage] = useParamState<number>("page", 1);
+
   const handlePageChange = async (newPage: number) => {
     setPage(newPage);
     const newRepos = await getBestRepos({ page: newPage });
     setPaginatedRepos(newRepos.items);
   };
+
+  const handleQueryChange  = async (newQuery: string) => {
+    setSearchQuery(newQuery);
+    const newRepos = await getBestRepos({ query: newQuery });
+    setPaginatedRepos(newRepos.items);
+  };
+
   return (
     <div>
+      {/* Search Input */}
+      <SearchInput searchQuery={searchQuery} setSearchQuery={handleQueryChange} />
+
+      {/* Table */}
       <Table columns={columns} rows={paginatedRepos} />
+
+      {/* Pagination */}
       <Pagination
         totalPages={15}
         currentPage={page}
