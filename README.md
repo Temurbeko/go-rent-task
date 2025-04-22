@@ -2,7 +2,7 @@ REPO: https://github.com/Temurbeko/go-rent-task
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-LIVE: 
+🚀LIVE: https://go-rent-task.vercel.app/
 
 ## Getting Started
 
